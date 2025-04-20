@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow"> 
+    <title>Biomethane Comparison Chart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        .chart-container {
+            position: relative;
+            height: 450px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            .chart-container {
+                height: 350px;
+            }
+            h1 {
+                font-size: 18px;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+        .key-takeaways {
+            background-color: #f1f8ff;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .key-takeaways h2 {
+            color: #2980b9;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .key-takeaways ul {
+            padding-left: 20px;
+        }
+        .key-takeaways li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .legend-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 15px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        .chart-title {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+        .applications {
+            margin-top: 30px;
+        }
+        .applications h2 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .application-card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        .application-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+        }
+        .application-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        /* Tab-based navigation for different chart types */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #fff;
+            border-bottom: 1px solid #fff;
+            margin-bottom: -1px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .chart-tab-content {
+            display: none;
+        }
+        .chart-tab-content.active {
+            display: block;
+        }
+        .scales-note {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: center;
+            margin: 10px 0 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Understanding Biomethane in Southeast Asia</h1>
+            <p class="subtitle">Comparative analysis of biomethane, biogas, and natural gas properties and applications</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-chart="radar">Radar Chart</div>
+            <div class="tab" data-chart="bar">Bar Comparison</div>
+        </div>
+        
+        <div class="chart-tab-content active" id="radar-chart">
+            <div class="chart-title">Comparison of Methane Content and Environmental Impact</div>
+            <div class="chart-container">
+                <canvas id="biomethaneRadarChart"></canvas>
+            </div>
+            <p class="scales-note">All metrics shown on 0-100 scale for consistent comparison</p>
+        </div>
+        
+        <div class="chart-tab-content" id="bar-chart">
+            <div class="chart-title">Detailed Comparison by Property</div>
+            <div class="chart-container">
+                <canvas id="biomethaneBarChart"></canvas>
+            </div>
+            <p class="scales-note">All metrics shown on 0-100 scale for consistent comparison</p>
+        </div>
+        
+        <div class="legend-container">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(54, 162, 235, 0.6);"></div>
+                <span>Biogas</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(75, 192, 192, 0.6);"></div>
+                <span>Biomethane</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(255, 99, 132, 0.6);"></div>
+                <span>Natural Gas</span>
+            </div>
+        </div>
+        
+        <div class="applications">
+            <h2>Key Applications of Biomethane in Southeast Asia</h2>
+            <div class="applications-grid">
+                <div class="application-card">
+                    <svg class="application-icon" viewBox="0 0 24 24">
+                        <path fill="#3498db" d="M18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5M19.5,9.5L21.46,12H17V9.5M6,18.5A1.5,1.5 0 0,1 4.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,17A1.5,1.5 0 0,1 6,18.5M20,8H17V4H3C1.89,4 1,4.89 1,6V17H3A3,3 0 0,0 6,20A3,3 0 0,0 9,17H15A3,3 0 0,0 18,20A3,3 0 0,0 21,17H23V12L20,8Z"/>
+                    </svg>
+                    <div class="application-title">Transport (BioCNG)</div>
+                    <p>Used in buses, trucks, and municipal vehicles</p>
+                </div>
+                <div class="application-card">
+                    <svg class="application-icon" viewBox="0 0 24 24">
+                        <path fill="#2ecc71" d="M12,3L2,12H5V20H19V12H22L12,3M12,8.75A2.25,2.25 0 0,1 14.25,11A2.25,2.25 0 0,1 12,13.25A2.25,2.25 0 0,1 9.75,11A2.25,2.25 0 0,1 12,8.75M12,15C13.5,15 16.5,15.75 16.5,17.25V18H7.5V17.25C7.5,15.75 10.5,15 12,15Z"/>
+                    </svg>
+                    <div class="application-title">Grid Injection</div>
+                    <p>Integration into existing gas pipelines</p>
+                </div>
+                <div class="application-card">
+                    <svg class="application-icon" viewBox="0 0 24 24">
+                        <path fill="#e74c3c" d="M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,22C10.05,22 8.22,21.44 6.69,20.47L10,15.47C10.6,15.81 11.28,16 12,16C12.72,16 13.4,15.81 14,15.47L17.31,20.47C15.78,21.44 13.95,22 12,22M2,12C2,7.86 4.5,4.3 8.11,2.78L10.34,8.36C8.96,9 8,10.38 8,12H2M16,12C16,10.38 15.04,9 13.66,8.36L15.89,2.78C19.5,4.3 22,7.86 22,12H16Z"/>
+                    </svg>
+                    <div class="application-title">Industrial Heating</div>
+                    <p>Boilers, furnaces, and steam generation</p>
+                </div>
+                <div class="application-card">
+                    <svg class="application-icon" viewBox="0 0 24 24">
+                        <path fill="#f39c12" d="M15,12H16.5V16.25L19.36,17.94L18.61,19.16L15,17V12M16,9C16.69,9 17.37,9.1 18,9.29V4.7L15,5.86V9.07C15.33,9 15.66,9 16,9M9,8A3,3 0 0,1 12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8M16,1A8,8 0 1,0 24,9A8,8 0 0,0 16,1Z"/>
+                    </svg>
+                    <div class="application-title">Power Generation</div>
+                    <p>Combined heat and power (CHP) systems</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+                <li><strong>Biomethane</strong> is upgraded biogas with over 95% methane content, matching natural gas in energy value but with carbon-neutral impact.</li>
+                <li><strong>Thailand, Indonesia,</strong> and <strong>Malaysia</strong> are adopting biomethane as a clean energy alternative for transportation, grid injection, and industrial applications.</li>
+                <li>Biomethane is produced through <strong>anaerobic digestion</strong> of organic waste (food scraps, agricultural residues, manure) followed by upgrading processes.</li>
+                <li>Most diesel engines can be converted to run on biomethane with payback periods of 12-24 months through fuel savings.</li>
+                <li>Biomethane supports <strong>circular economy</strong> practices by turning waste into valuable renewable energy.</li>
+            </ul>
+        </div>
+        
+<!-- SEO Backlink to PVE -->
+<p style="text-align:center; margin-top: 20px;">
+  <a href="https://www.pvegroup.asia/what-is-biomethane-in-thailand-indonesia-malaysia.html" target="_blank" rel="dofollow">
+    Learn more about Biomethane Supplier and Distributor from PVE Group
+  </a>
+</p>
+        </div>
+    </div>
+    
+    <script>
+        // Chart configuration
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data from the provided document - converted all values to 0-100 scale
+            const chartLabels = ['Methane Content (%)', 'Carbon Impact', 'Grid Compatibility', 'Vehicle Fuel Suitability'];
+            
+            // Converting original data to 0-100 scale:
+            // - Methane Content was already on 0-100 scale (60% and 95%)
+            // - Carbon Impact was 1-10 scale: converting 3→30, 1→10, 8→80
+            // - Grid Compatibility was 0-1 scale: converting 0→0, 1→100
+            // - Vehicle Fuel Suitability was 0-1 scale: converting 0.3→30, 1→100
+            const chartData = {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        label: 'Biogas',
+                        data: [60, 30, 0, 30],  // Scaled values
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Biomethane',
+                        data: [95, 10, 100, 100],  // Scaled values
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Natural Gas',
+                        data: [95, 80, 100, 100],  // Scaled values
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            // Custom tooltips function for both charts
+            const customTooltips = {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        
+                        if (label) {
+                            label += ': ';
+                        }
+                        
+                        const value = context.raw;
+                        const dataIndex = context.dataIndex;
+                        
+                        // Custom tooltip text based on data point
+                        if (chartLabels[dataIndex].includes('Methane Content')) {
+                            return label + value + '%';
+                        } else if (chartLabels[dataIndex].includes('Carbon Impact')) {
+                            const impacts = ['Carbon-neutral', 'Low', 'Medium', 'High'];
+                            // Interpret carbon impact on 0-100 scale
+                            return label + (value <= 20 ? impacts[0] : 
+                                          value <= 40 ? impacts[1] : 
+                                          value <= 70 ? impacts[2] : impacts[3]);
+                        } else if (chartLabels[dataIndex].includes('Grid Compatibility')) {
+                            return label + (value >= 50 ? 'Compatible' : 'Not compatible');
+                        } else if (chartLabels[dataIndex].includes('Vehicle Fuel')) {
+                            if (value <= 30) return label + 'Limited use';
+                            if (value <= 70) return label + 'Moderate use'; 
+                            return label + 'Fully suitable';
+                        }
+                        return label + value;
+                    }
+                }
+            };
+            
+            // Radar Chart
+            const ctxRadar = document.getElementById('biomethaneRadarChart').getContext('2d');
+            const radarChart = new Chart(ctxRadar, {
+                type: 'radar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            beginAtZero: true,
+                            max: 100,  // Using consistent 0-100 scale
+                            min: 0,
+                            ticks: {
+                                stepSize: 20,
+                                backdropColor: 'transparent'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 13,
+                                    weight: 'bold'
+                                },
+                                padding: 20  // Added padding to prevent overlap
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: customTooltips
+                    }
+                }
+            });
+            
+            // Bar Chart 
+            const ctxBar = document.getElementById('biomethaneBarChart').getContext('2d');
+            const barChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + (value === 100 ? '%' : '');
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: customTooltips
+                    }
+                }
+            });
+            
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.chart-tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const chartType = tab.getAttribute('data-chart');
+                    document.getElementById(`${chartType}-chart`).classList.add('active');
+                    
+                    // Update charts to ensure proper rendering
+                    if (chartType === 'radar') {
+                        radarChart.update();
+                    } else if (chartType === 'bar') {
+                        barChart.update();
+                    }
+                });
+            });
+            
+            // Function to handle responsiveness
+            function handleResize() {
+                const width = window.innerWidth;
+                if (width < 480) {
+                    radarChart.options.scales.r.pointLabels.font.size = 10;
+                    radarChart.options.scales.r.pointLabels.padding = 15;
+                } else if (width < 768) {
+                    radarChart.options.scales.r.pointLabels.font.size = 11;
+                    radarChart.options.scales.r.pointLabels.padding = 18;
+                } else {
+                    radarChart.options.scales.r.pointLabels.font.size = 13;
+                    radarChart.options.scales.r.pointLabels.padding = 20;
+                }
+                radarChart.update();
+                barChart.update();
+            }
+            
+            // Initial call and event listener for window resize
+            handleResize();
+            window.addEventListener('resize', handleResize);
+        });
+    </script>
+</body>
+</html>
